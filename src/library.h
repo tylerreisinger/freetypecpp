@@ -1,0 +1,6 @@
+#ifndef FREETYPECPP_LIBRARY_H
+#define FREETYPECPP_LIBRARY_H
+
+void hello();
+
+#endif //FREETYPECPP_LIBRARY_H
