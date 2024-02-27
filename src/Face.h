@@ -4,6 +4,8 @@
 #include <freetype2/ft2build.h>
 #include FT_FREETYPE_H
 
+#include "Glyph.h"
+
 namespace ft {
 
 class Face {
@@ -49,6 +51,13 @@ public:
     [[nodiscard]]
     short underline_thickness() const noexcept { return m_face->underline_thickness; }
 
+    [[nodiscard]]
+    const GlyphSlot current_glyph() const noexcept { return GlyphSlot(m_face->glyph); }
+    GlyphSlot current_glyph() noexcept { return GlyphSlot(m_face->glyph); }
+    GlyphSlot load_glyph(unsigned int glyph_index, bool render = true);
+    GlyphSlot load_char(char32_t char_code, bool render = true);
+
+    [[nodiscard]]
     FT_Face get_handle() const noexcept { return m_face; }
 private:
     void destroy() noexcept;

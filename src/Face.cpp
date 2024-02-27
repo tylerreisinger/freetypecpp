@@ -6,6 +6,8 @@
 
 #include <algorithm>
 
+#include "errors.h"
+
 namespace ft {
     Face::Face(FT_Face face) noexcept: m_face(face) {}
 
@@ -33,6 +35,27 @@ namespace ft {
 
     Face::~Face() noexcept {
         destroy();
+    }
+
+    GlyphSlot Face::load_glyph(unsigned int glyph_index, bool render) {
+        FT_CHECK(FT_Load_Glyph(m_face, glyph_index, FT_LOAD_DEFAULT));
+        if (render) {
+            FT_CHECK(FT_Render_Glyph(m_face->glyph, FT_RENDER_MODE_NORMAL));
+        }
+        return GlyphSlot(m_face->glyph);
+    }
+
+    GlyphSlot Face::load_char(char32_t char_code, bool render) {
+        FT_UInt glyph_index = FT_Get_Char_Index(m_face, char_code);
+        if (glyph_index == 0) {
+            return GlyphSlot(m_face->glyph);
+        } else {
+            FT_CHECK(FT_Load_Glyph(m_face, glyph_index, FT_LOAD_DEFAULT));
+            if (render) {
+                FT_CHECK(FT_Render_Glyph(m_face->glyph, FT_RENDER_MODE_NORMAL));
+            }
+            return GlyphSlot(m_face->glyph);
+        }
     }
 
 } // ft

@@ -7,6 +7,7 @@
 
 #include <freetype2/ft2build.h>
 #include FT_FREETYPE_H
+
 #include "Face.h"
 
 namespace ft {
@@ -38,7 +39,7 @@ public:
     FT_Library get_handle() const noexcept { return m_library; }
 
     [[nodiscard]]
-    Face construct_face(std::string_view filepath, long face_index) const;
+    Face construct_face(std::string_view filepath, long face_index, float width, float height = 0, unsigned int dpi = 0) const;
 
 
 private:
