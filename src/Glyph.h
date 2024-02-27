@@ -1,10 +1,14 @@
 #ifndef FREETYPECPP_GLYPH_H
 #define FREETYPECPP_GLYPH_H
 
+#include <optional>
+
 #include <freetype2/ft2build.h>
 #include FT_FREETYPE_H
+#include FT_GLYPH_H
 
 #include "Types.h"
+#include "errors.h"
 
 namespace ft {
 
@@ -83,6 +87,80 @@ public:
 
 private:
     FT_GlyphSlot m_glyph = nullptr;
+};
+
+class Glyph {
+public:
+    Glyph() = default;
+    explicit Glyph(FT_Glyph glyph) noexcept: m_glyph(glyph) {}
+    Glyph(const Glyph&) = delete;
+    Glyph& operator=(const Glyph&) = delete;
+    Glyph(Glyph&& other) noexcept {
+        destroy();
+        std::swap(m_glyph, other.m_glyph);
+    }
+    Glyph& operator=(Glyph&& other) noexcept {
+        destroy();
+        std::swap(m_glyph, other.m_glyph);
+        return *this;
+    }
+
+    [[nodiscard]]
+    FT_Glyph get_handle() const noexcept { return m_glyph; }
+    [[nodiscard]]
+    Vector<Int16_16> advance() const noexcept { return {m_glyph->advance}; }
+    [[nodiscard]]
+    bool has_bitmap() const noexcept { return m_glyph->format == FT_GLYPH_FORMAT_BITMAP; }
+    [[nodiscard]]
+    std::optional<FT_Bitmap> bitmap() const noexcept {
+        if(has_bitmap()) {
+            return reinterpret_cast<FT_BitmapGlyph>(m_glyph)->bitmap;
+        } else {
+            return std::nullopt;
+        }
+    }
+    [[nodiscard]]
+    std::optional<int> bitmap_left() const noexcept {
+        if(has_bitmap()) {
+            return reinterpret_cast<FT_BitmapGlyph>(m_glyph)->left;
+        } else {
+            return std::nullopt;
+        }
+    }
+    [[nodiscard]]
+    std::optional<int> bitmap_top() const noexcept {
+        if(has_bitmap()) {
+            return reinterpret_cast<FT_BitmapGlyph>(m_glyph)->top;
+        } else {
+            return std::nullopt;
+        }
+    }
+
+    [[nodiscard]]
+    BoundingBox<int> control_box() const noexcept {
+        FT_BBox bbox;
+        FT_Glyph_Get_CBox(m_glyph, FT_GLYPH_BBOX_GRIDFIT, &bbox);
+        return BoundingBox<int>(bbox);
+    }
+
+
+    [[nodiscard]]
+    Glyph clone() const {
+        FT_Glyph clone;
+        FT_CHECK(FT_Glyph_Copy(m_glyph, &clone));
+        return Glyph(clone);
+    }
+
+    ~Glyph() { destroy(); }
+private:
+    void destroy() {
+        if(m_glyph) {
+            FT_Done_Glyph(m_glyph);
+        }
+        m_glyph = nullptr;
+    }
+
+    FT_Glyph m_glyph = nullptr;
 };
 
 } // ft

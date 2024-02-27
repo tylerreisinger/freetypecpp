@@ -31,6 +31,6 @@ void print_stats() {
     std::cout << "Underline Thickness: " << face.underline_thickness() << '\n';
     std::cout << "Face Flags: " << face.face_flags() << '\n';
     std::cout << "Style Flags: " << face.style_flags() << '\n';
-    std::cout << "Bounding Box: [" << face.bbox().xMin << ", " << face.bbox().yMin << "], ["
-        << face.bbox().xMax << ", " << face.bbox().yMax << "]\n";
+    std::cout << "Bounding Box: [" << face.bbox().x_min << ", " << face.bbox().y_min << "], ["
+        << face.bbox().x_max << ", " << face.bbox().y_max << "]\n";
 }

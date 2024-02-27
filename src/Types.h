@@ -91,5 +91,31 @@ public:
     T y;
 };
 
+template <typename T>
+class BoundingBox {
+public:
+    constexpr BoundingBox() noexcept: x_min(0), y_min(0), x_max(0), y_max(0) {}
+    constexpr BoundingBox(T x_min, T y_min, T x_max, T y_max) noexcept:
+        x_min(x_min), y_min(y_min), x_max(x_max), y_max(y_max) {}
+
+    constexpr BoundingBox(FT_BBox bbox) noexcept :
+        x_min(bbox.xMin), y_min(bbox.yMin), x_max(bbox.xMax), y_max(bbox.yMax) {};
+    constexpr BoundingBox(const BoundingBox&) = default;
+    constexpr BoundingBox& operator=(const BoundingBox&) = default;
+    constexpr BoundingBox(BoundingBox&&) noexcept = default;
+    constexpr BoundingBox& operator=(BoundingBox&&) noexcept = default;
+
+    [[nodiscard]]
+    constexpr bool is_null() const noexcept {
+        return x_min == 0 && y_min == 0 && x_max == 0 && y_max == 0;
+    }
+
+
+    T x_min;
+    T y_min;
+    T x_max;
+    T y_max;
+};
+
 
 #endif //FREETYPECPP_TYPES_H

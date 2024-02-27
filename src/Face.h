@@ -33,7 +33,7 @@ public:
     [[nodiscard]]
     const char* style_name() const noexcept { return m_face->style_name; }
     [[nodiscard]]
-    FT_BBox bbox() const noexcept { return m_face->bbox; }
+    BoundingBox<FT_Pos> bbox() const noexcept { return {m_face->bbox}; }
     [[nodiscard]]
     unsigned short units_per_EM() const noexcept { return m_face->units_per_EM; }
     [[nodiscard]]

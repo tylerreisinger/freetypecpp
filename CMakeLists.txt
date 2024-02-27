@@ -7,7 +7,7 @@ set(FREETYPE_CPP_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 find_package(Freetype REQUIRED)
 
-add_library(freetypecpp src/library.cpp src/Library.cpp src/Library.h src/errors.cpp src/errors.h src/Face.cpp src/Face.h
+add_library(freetypecpp src/Library.cpp src/Library.h src/errors.cpp src/errors.h src/Face.cpp src/Face.h
         tools/font_stats/font_stats.cpp
         src/Glyph.cpp
         src/Glyph.h
