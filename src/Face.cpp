@@ -37,7 +37,7 @@ namespace ft {
         destroy();
     }
 
-    GlyphSlot Face::load_glyph(unsigned int glyph_index, bool render) {
+    std::optional<GlyphSlot> Face::load_glyph(unsigned int glyph_index, bool render) {
         FT_CHECK(FT_Load_Glyph(m_face, glyph_index, FT_LOAD_DEFAULT));
         if (render) {
             FT_CHECK(FT_Render_Glyph(m_face->glyph, FT_RENDER_MODE_NORMAL));
@@ -45,10 +45,10 @@ namespace ft {
         return GlyphSlot(m_face->glyph);
     }
 
-    GlyphSlot Face::load_char(char32_t char_code, bool render) {
+    std::optional<GlyphSlot> Face::load_char(char32_t char_code, bool render) {
         FT_UInt glyph_index = FT_Get_Char_Index(m_face, char_code);
         if (glyph_index == 0) {
-            return GlyphSlot(m_face->glyph);
+            return std::nullopt;
         } else {
             FT_CHECK(FT_Load_Glyph(m_face, glyph_index, FT_LOAD_DEFAULT));
             if (render) {
