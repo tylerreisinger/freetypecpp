@@ -4,32 +4,6 @@
 #include <freetype2/ft2build.h>
 #include FT_FREETYPE_H
 
-class Int26_6 {
-public:
-    explicit Int26_6(FT_Fixed value): m_value(value) {}
-    ~Int26_6() = default;
-    Int26_6(const Int26_6&) = default;
-    Int26_6& operator=(const Int26_6&) = default;
-    Int26_6(Int26_6&&) noexcept = default;
-    Int26_6& operator=(Int26_6&&) noexcept = default;
-
-    [[nodiscard]]
-    FT_Fixed raw_value() const noexcept { return m_value; }
-    [[nodiscard]]
-    float as_float() const noexcept { return static_cast<float>(m_value) / 64.0f; }
-    [[nodiscard]]
-    long integer_part() const noexcept { return m_value >> 6; }
-    [[nodiscard]]
-    long fractional_part() const noexcept { return m_value & 0x3F; }
-    [[nodiscard]]
-    long ceil() const noexcept { return (m_value + 63) >> 6; }
-    [[nodiscard]]
-    long floor() const noexcept { return m_value >> 6; }
-
-private:
-    FT_Fixed m_value = 0;
-};
-
 class Int16_16 {
 public:
     explicit Int16_16(FT_Fixed value): m_value(value) {}
@@ -55,6 +29,77 @@ public:
 private:
     FT_Fixed m_value = 0;
 };
+
+class Int26_6 {
+public:
+    explicit Int26_6(FT_Fixed value): m_value(value) {}
+    ~Int26_6() = default;
+    Int26_6(const Int26_6&) = default;
+    Int26_6& operator=(const Int26_6&) = default;
+    Int26_6(Int26_6&&) noexcept = default;
+    Int26_6& operator=(Int26_6&&) noexcept = default;
+
+    bool operator ==(const Int26_6& other) const noexcept {
+        return m_value == other.m_value;
+    }
+    std::strong_ordering operator <=>(const Int26_6& other) const noexcept {
+        return m_value <=> other.m_value;
+    }
+
+    Int26_6& operator +=(const Int26_6& other) noexcept {
+        m_value += other.m_value;
+        return *this;
+    }
+    Int26_6& operator -=(const Int26_6& other) noexcept {
+        m_value -= other.m_value;
+        return *this;
+    }
+
+    Int26_6 operator +(const Int26_6& other) const noexcept {
+        return Int26_6(m_value + other.m_value);
+    }
+    Int26_6 operator -(const Int26_6& other) const noexcept {
+        return Int26_6(m_value - other.m_value);
+    }
+    Int26_6 operator -() const noexcept {
+        return Int26_6(-m_value);
+    }
+    Int26_6 operator *(int factor) const noexcept {
+        return Int26_6(m_value * factor);
+    }
+    Int26_6 operator *(const Int16_16& factor) const noexcept {
+        return Int26_6(FT_MulFix(m_value, factor.raw_value()));
+    }
+    Int26_6& operator *=(int factor) noexcept {
+        m_value *= factor;
+        return *this;
+    }
+    Int26_6& operator *=(const Int16_16& factor) noexcept {
+        m_value = FT_MulFix(m_value, factor.raw_value());
+        return *this;
+    }
+    Int26_6 operator /(int factor) const noexcept {
+        return Int26_6(m_value / factor);
+    }
+
+
+    [[nodiscard]]
+    FT_Fixed raw_value() const noexcept { return m_value; }
+    [[nodiscard]]
+    float as_float() const noexcept { return static_cast<float>(m_value) / 64.0f; }
+    [[nodiscard]]
+    long integer_part() const noexcept { return m_value >> 6; }
+    [[nodiscard]]
+    long fractional_part() const noexcept { return m_value & 0x3F; }
+    [[nodiscard]]
+    long ceil() const noexcept { return (m_value + 63) >> 6; }
+    [[nodiscard]]
+    long floor() const noexcept { return m_value >> 6; }
+
+private:
+    FT_Fixed m_value = 0;
+};
+
 
 template <typename T>
 class Vector {

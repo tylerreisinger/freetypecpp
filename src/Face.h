@@ -51,6 +51,18 @@ public:
     [[nodiscard]]
     short underline_thickness() const noexcept { return m_face->underline_thickness; }
 
+    Int26_6 font_units_to_pixels_x(int value) const noexcept {
+        return Int26_6(value) * Int16_16(m_face->size->metrics.x_scale);
+    }
+    Int26_6 font_units_to_pixels_y(int value) const noexcept {
+        return Int26_6(value) * Int16_16(m_face->size->metrics.y_scale);
+    }
+
+    [[nodiscard]]
+    Int26_6 max_height() const noexcept { return Int26_6(m_face->ascender - m_face->descender) * Int16_16(m_face->size->metrics.y_scale); }
+    [[nodiscard]]
+    Int26_6 max_width() const noexcept { return Int26_6(m_face->max_advance_width) * Int16_16(m_face->size->metrics.x_scale); }
+
     [[nodiscard]]
     GlyphSlot current_glyph() const noexcept { return GlyphSlot(m_face->glyph); }
     GlyphSlot current_glyph() noexcept { return GlyphSlot(m_face->glyph); }

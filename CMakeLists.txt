@@ -15,4 +15,4 @@ add_library(freetypecpp src/Library.cpp src/Library.h src/errors.cpp src/errors.
 target_link_libraries(freetypecpp ${FREETYPE_LIBRARIES})
 target_include_directories(freetypecpp PRIVATE ${FREETYPE_INCLUDE_DIRS})
 
-include(tools/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/tools/CMakeLists.txt)
